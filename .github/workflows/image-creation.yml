@@ -65,7 +65,7 @@ jobs:
           IMAGE_TAG="${GITHUB_RUN_ID}-${GITHUB_SHA}"
           IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend"
           echo "Building image with tag: ${IMAGE_TAG}"
-          docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./dist
+          docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
           docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
         
       - name: Push Docker image to Docker Hub
