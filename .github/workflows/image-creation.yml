@@ -60,23 +60,22 @@ jobs:
         run: |
           ls -alh
 
-          - name: Build Docker image
-          run: |
-            IMAGE_TAG="${GITHUB_RUN_ID}-${GITHUB_SHA}"
-            IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend"
-            echo "Building image with tag: ${IMAGE_TAG}"
-            docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./dist
-            docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+      - name: Build Docker image
+        run: |
+          IMAGE_TAG="${GITHUB_RUN_ID}-${GITHUB_SHA}"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend"
+          echo "Building image with tag: ${IMAGE_TAG}"
+          docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./dist
+          docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
         
       - name: Push Docker image to Docker Hub
         run: |
-            echo "Pushing image ${IMAGE_NAME}:${IMAGE_TAG}"
-            docker push ${IMAGE_NAME}:${IMAGE_TAG}
-            docker push ${IMAGE_NAME}:latest
+          echo "Pushing image ${IMAGE_NAME}:${IMAGE_TAG}"
+          docker push ${IMAGE_NAME}:${IMAGE_TAG}
+          docker push ${IMAGE_NAME}:latest
 
       - name: Clean up Docker images
         if: success()
         run: |
           docker rmi ${IMAGE_NAME}:${IMAGE_TAG}
           docker rmi ${IMAGE_NAME}:latest
-
