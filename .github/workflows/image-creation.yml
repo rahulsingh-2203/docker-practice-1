@@ -1,4 +1,4 @@
-name: React application testing, building, image creation and uploading to Docker hub
+name: React application building, image creation and uploading to Docker hub
 
 on:
   push:
@@ -64,13 +64,15 @@ jobs:
         run: |
           IMAGE_TAG="${GITHUB_RUN_ID}-${GITHUB_SHA}"
           IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend"
-          echo "Building image with tag: ${IMAGE_TAG}"
+          echo "Building Docker image with IMAGE_TAG: ${IMAGE_TAG}"
+          echo "IMAGE_NAME: ${IMAGE_NAME}"
           docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
           docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
         
       - name: Push Docker image to Docker Hub
         run: |
-          echo "Pushing image ${IMAGE_NAME}:${IMAGE_TAG}"
+          echo "Pushing Docker image ${IMAGE_NAME}:${IMAGE_TAG}"
+          echo "Pushing Docker image ${IMAGE_NAME}:latest"
           docker push ${IMAGE_NAME}:${IMAGE_TAG}
           docker push ${IMAGE_NAME}:latest
 
