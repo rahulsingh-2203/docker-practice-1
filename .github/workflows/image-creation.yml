@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: react-build
-          path: ./build
+          path: ./dist
 
   docker_deploy:
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: react-build
-          path: ./build
+          path: ./dist
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
@@ -57,7 +57,7 @@ jobs:
         run: |
           IMAGE_TAG="${GITHUB_RUN_ID}-${GITHUB_SHA}"
           IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend"
-          docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./build
+          docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ./dist
           docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
 
       - name: Push Docker image to Docker Hub
@@ -66,6 +66,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
       - name: Clean up Docker images
+        if: success()
         run: |
           docker rmi ${IMAGE_NAME}:${IMAGE_TAG}
           docker rmi ${IMAGE_NAME}:latest
