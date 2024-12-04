@@ -171,3 +171,8 @@ jobs:
           docker rmi ${IMAGE_NAME}:latest
 ```
 ---
+## 🌍 Project Deployment and Access
+After the CI/CD pipeline runs successfully, two Docker image tags will be pushed to Docker Hub:
+
+- latest: The most recent stable version.
+- `<GITHUB_RUN_ID>-<GITHUB_SHA>`: A versioned tag based on the GitHub run ID and commit SHA.
