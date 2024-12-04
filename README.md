@@ -190,7 +190,7 @@ docker run -p 80:80 <your-docker-username>/frontend:<tag>
 Your React app will be accessible on http://localhost:80.
 ```
 ---
-##💡 Learnings & Takeaways
+## 💡 Learnings & Takeaways
 ### Docker with React:
 Multi-stage builds in Dockerfiles ensure that we create smaller and more efficient images by separating the build and runtime environments.
 ### CI/CD with GitHub Actions:
