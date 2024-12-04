@@ -79,3 +79,94 @@ EXPOSE 80
 # Run Apache in the foreground
 CMD ["httpd-foreground"]
 ```
+#### YAML script
+```
+name: React application building, image creation, and uploading to Docker Hub
+
+on:
+  push:
+    branches:
+      - sandbox
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+
+      - name: Set up node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+        
+      - name: Install dependencies
+        run: npm install
+    
+      # Optionally, run tests (currently commented out)
+      #- name: Run tests
+        #run: npm test
+    
+      - name: Build React app
+        run: npm run build
+    
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-build
+          path: ./dist
+
+  docker_deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: react-build
+          path: ./dist
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+    
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: List directory contents
+        run: |
+          ls -alh
+
+      - name: Build Docker image
+        run: |
+          IMAGE_TAG="${GITHUB_RUN_ID}-${GITHUB_SHA}"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend"
+          echo "Building Docker image with IMAGE_TAG: ${IMAGE_TAG}"
+          echo "IMAGE_NAME: ${IMAGE_NAME}"
+          docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+          docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+        
+      - name: Push Docker image to Docker Hub
+        run: |
+          IMAGE_TAG="${GITHUB_RUN_ID}-${GITHUB_SHA}"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend"
+          echo "Pushing Docker image ${IMAGE_NAME}:${IMAGE_TAG}"
+          echo "Pushing Docker image ${IMAGE_NAME}:latest"
+          docker push ${IMAGE_NAME}:${IMAGE_TAG}
+          docker push ${IMAGE_NAME}:latest
+
+      - name: Clean up Docker images
+        if: success()
+        run: |
+          IMAGE_TAG="${GITHUB_RUN_ID}-${GITHUB_SHA}"
+          IMAGE_NAME="${{ secrets.DOCKER_USERNAME }}/frontend"
+          docker rmi ${IMAGE_NAME}:${IMAGE_TAG}
+          docker rmi ${IMAGE_NAME}:latest
+```
