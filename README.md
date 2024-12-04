@@ -184,8 +184,19 @@ After the CI/CD pipeline runs successfully, two Docker image tags will be pushed
 ```bash
 docker pull <your-docker-username>/frontend:<tag>
 ```
-Run the container:
+- Run the container:
 ```bash
 docker run -p 80:80 <your-docker-username>/frontend:<tag>
 Your React app will be accessible on http://localhost:80.
 ```
+---
+##💡 Learnings & Takeaways
+### Docker with React:
+Multi-stage builds in Dockerfiles ensure that we create smaller and more efficient images by separating the build and runtime environments.
+### CI/CD with GitHub Actions:
+- Automating the process using GitHub Actions makes it easy to continuously build, test, and deploy applications without manual intervention.
+- This approach ensures that every push to the sandbox branch triggers the pipeline and keeps the app up-to-date.
+### Pro Tips:
+- **Caching Dependencies**: Speed up the pipeline by caching node_modules to avoid re-installing dependencies on every run.
+- **Security**: Use tools like Trivy to scan Docker images for vulnerabilities and ensure security.
+---
