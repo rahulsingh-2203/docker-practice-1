@@ -176,3 +176,16 @@ After the CI/CD pipeline runs successfully, two Docker image tags will be pushed
 
 - latest: The most recent stable version.
 - `<GITHUB_RUN_ID>-<GITHUB_SHA>`: A versioned tag based on the GitHub run ID and commit SHA.
+### How to Access the Docker Image:
+- Log in to Docker Hub.
+
+- Pull the image with the following command:
+
+```bash
+docker pull <your-docker-username>/frontend:<tag>
+```
+Run the container:
+```bash
+docker run -p 80:80 <your-docker-username>/frontend:<tag>
+Your React app will be accessible on http://localhost:80.
+```
